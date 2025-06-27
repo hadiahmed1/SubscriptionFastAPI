@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String         @id @default(uuid()) @db.Uuid
+  username    String  @unique
+  email       String         @unique
+  password    String
+  isVerified  Boolean        @default(false)
+  subscriptions Subscription[]
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @updatedAt
+  deleted_at  DateTime?
+}
+
+model Company {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  email       String   @unique
+  password    String
+  plans       Plan[]
+  features    Feature[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  deleted_at  DateTime?
+}
+
+model Subscription {
+  id           String    @id @default(uuid()) @db.Uuid
+  subscriber   User      @relation(fields: [subscriberId], references: [id])
+  subscriberId String    @db.Uuid
+  plan         Plan      @relation(fields: [planId], references: [id])
+  planId       String    @db.Uuid
+  payments     Payment[]
+  expiresOn    DateTime
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+}
+
+model Plan {
+  id          String         @id @default(uuid()) @db.Uuid
+  company     Company        @relation(fields: [companyId], references: [id])
+  companyId   String         @db.Uuid
+  name        String
+  description String
+  cost        Int
+  discount    Int
+  subscriptions Subscription[]
+  features    PlanFeatures[]
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @updatedAt
+  deleted_at  DateTime?
+}
+
+model Feature {
+  id          String         @id @default(uuid()) @db.Uuid
+  company     Company        @relation(fields: [companyId], references: [id])
+  companyId   String         @db.Uuid
+  name        String
+  description String
+  plans       PlanFeatures[]
+}
+
+model PlanFeatures {
+  planId     String  @db.Uuid
+  featureId  String  @db.Uuid
+  plan       Plan    @relation(fields: [planId], references: [id])
+  feature    Feature @relation(fields: [featureId], references: [id])
+
+  @@id([planId, featureId])
+}
+
+model Payment {
+  id             String         @id @default(uuid()) @db.Uuid
+  subscription   Subscription   @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String         @db.Uuid
+  amount         Int
+  status         PaymentStatus
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  deleted_at     DateTime?
+}
+
+enum PaymentStatus {
+  paid
+  failed
+  pending
+  cancelled
+}

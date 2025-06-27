@@ -1,0 +1,58 @@
+node_modules
+.env
+
+/generated/prisma
+__pycache__/
+*.py[cod]
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Byte-compiled / cache
+.mypy_cache/
+.pytest_cache/
+coverage/
+htmlcov/
+
+# Prisma
+prisma/migrations/*/migration.sql
+!prisma/migrations/*/README.md
+prisma/.env
+prisma/dev.db
+prisma/generated/
+
+# Node/npm
+node_modules/
+package-lock.json
+
+# Prisma Python client (DO NOT IGNORE)
+# Keep: generated/ (Python) unless it's massive or you regenerate it on deploy
+# Remove this line if you want to ignore it:
+# prisma/generated/
+
+# Docker
+*.pid
+*.tar
+*.bak
+*.old
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+
+# Uvicorn/PID
+*.pid

@@ -5,24 +5,23 @@ from app.schemas.user_schema import UserCreate
 from app.core.security import hash_password
 from app.db.client import db
 
-fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$12$NSXwHNTGqk8wkZsZblQHT.ECd49EaKFnA6nbnDgz3KQuNpFl6QG4O",
-        "disabled": False,
-    }
-}
 
-def get_user(db, username: str):
-    if username in db:
-        return UserInDB(**db[username])
+async def get_user(identifier: str) -> User:
+    user = await db.user.find_first(
+        where={
+            'OR': [
+                {'username': identifier},
+                {'email': identifier},
+            ]
+        }
+    )
+    print(user)
+    return user
 
-def authenticate_user(fake_db, username: str, password: str):
-    print("username=",username)
-    user = get_user(fake_db, username)
-    if not user or not verify_password(password, user.hashed_password):
+async def authenticate_user(identifier: str, password: str):
+    user:User|None = await get_user(identifier)
+
+    if user is None or not verify_password(password, user.password):
         return False
     return user
 

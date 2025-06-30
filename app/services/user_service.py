@@ -32,6 +32,7 @@ async def create_user(user_data: UserCreate) -> User:
         data={
             "username": user_data.username,
             "email": user_data.email,
+            "role": user_data.role,
             "password": hashed_password,
         }
     )

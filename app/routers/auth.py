@@ -1,11 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
-from app.db.client import db
-from app.core.config import SECRET_KEY, ALGORITHM
-from app.schemas.token import Token, TokenData
+from app.core.dependancy import get_current_user
+from app.schemas.token import Token
 from prisma.models import User
-from app.services.user_service import get_user, authenticate_user
+from app.services.user_service import authenticate_user
 from app.core.auth import create_access_token
 
 router = APIRouter()
@@ -21,16 +19,5 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/users/me", response_model=User)
-async def read_users_me(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id = payload.get("id")
-        if id is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    user = await db.user.find_unique(where={'id':id})
-    if user is None:
-        raise HTTPException(status_code=401, detail="User not found")
-    return user
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user

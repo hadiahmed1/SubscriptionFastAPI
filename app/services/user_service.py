@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from app.core.security import verify_password
 from prisma.models import User
 from app.schemas.user_schema import UserCreate
@@ -35,3 +36,16 @@ async def create_user(user_data: UserCreate) -> User:
             "password": hashed_password,
         }
     )
+
+async def get_company(company_id):
+    company= await db.user.find_unique(where={
+        'id':company_id,
+        'role':'COMPANY'
+    })
+    if company is None:
+        raise HTTPException(
+            status_code=400,
+            detail="Feature with this name already exists for this company."
+        )
+    else:
+        return company

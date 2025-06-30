@@ -18,7 +18,7 @@ async def create_plan(company_id,plan_data: PlanCreate)->Plan:
 async def find_plans()->List[Plan]:
     return await db.plan.find_many()
 
-async def find_plan_byID(id):
+async def find_plan_byID(id)->Plan:
     plan=await db.plan.find_unique(where={'id':id})
     if plan is None:
             raise HTTPException(status_code=404, detail="Invalid Plan ID")

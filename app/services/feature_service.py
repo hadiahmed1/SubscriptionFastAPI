@@ -9,17 +9,18 @@ from app.services.user_service import get_company
 
 
 async def create_feature(company_id,feature_data: FeatureCreate)->Feature:
-    return await db.feature.create(data={
+    feature = await db.feature.create(data={
         'companyId':company_id,
         'name':feature_data.name,
         'description':feature_data.description,
     })
+    return feature
     
 async def find_features(companyId)->List[Feature]:
-    company =await get_company(company_id=companyId)
+    company = await get_company(company_id=companyId)
     return await db.feature.find_many(where={"companyId":company.id})
 
-async def find_feature_byID(id):
-    feature=await db.feature.find_unique(where={'id':id})
+async def find_feature_byID(id)->Feature:
+    feature = await db.feature.find_unique(where={'id':id})
     if feature is None:
             raise HTTPException(status_code=404, detail="Invalid Feature ID")

@@ -1,4 +1,3 @@
-from app.models.user import UserInDB
 from app.core.security import verify_password
 from prisma.models import User
 from app.schemas.user_schema import UserCreate

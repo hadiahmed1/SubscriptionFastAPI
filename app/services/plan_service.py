@@ -24,7 +24,7 @@ async def validate_feature_ids_for_company(feature_ids: list[str], company_id: s
 async def create_plan(company_id, plan_data: PlanCreate)->Plan:
     feature_connections = [{"id": fid} for fid in plan_data.feature_ids]
     
-    await validate_feature_ids_for_company(plan_data.feature_ids, company.id)
+    await validate_feature_ids_for_company(plan_data.feature_ids, company_id)
      
     return await db.plan.create(
         data={

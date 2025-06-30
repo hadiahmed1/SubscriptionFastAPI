@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def register_user(plan: PlanCreate,  company: User = Depends(get_current_company)):
+async def post_plan(plan: PlanCreate,  company: User = Depends(get_current_company)):
     try:
         new_plan = await create_plan(company_id=company.id, plan_data=plan)
         return new_plan

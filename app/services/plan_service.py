@@ -6,9 +6,26 @@ from app.db.client import db
 from app.schemas.plan_schema import PlanCreate
 from prisma.models import Plan,User
 
+async def validate_feature_ids_for_company(feature_ids: list[str], company_id: str):
+    company_features = await db.feature.find_many(
+        where={"companyId": company_id},
+        select={"id": True}
+    )
+    valid_feature_ids = {f["id"] for f in company_features}
+
+    invalid_ids = [fid for fid in feature_ids if fid not in valid_feature_ids]
+    if invalid_ids:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid feature IDs for company: {invalid_ids}"
+        )
+
 
 async def create_plan(company_id, plan_data: PlanCreate)->Plan:
     feature_connections = [{"id": fid} for fid in plan_data.feature_ids]
+    
+    await validate_feature_ids_for_company(plan_data.feature_ids, company.id)
+     
     return await db.plan.create(
         data={
             "companyId": company_id,

@@ -15,6 +15,8 @@ model User {
   password      String
   isVerified    Boolean        @default(false)
   subscriptions Subscription[]
+  plans      Plan[]
+  features   Feature[]
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   deleted_at    DateTime?
@@ -24,18 +26,6 @@ enum Role {
   USER
   COMPANY
   ADMIN
-}
-
-model Company {
-  id         String    @id @default(uuid()) @db.Uuid
-  name       String
-  email      String    @unique
-  password   String
-  plans      Plan[]
-  features   Feature[]
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
 }
 
 model Subscription {
@@ -53,7 +43,7 @@ model Subscription {
 
 model Plan {
   id            String         @id @default(uuid()) @db.Uuid
-  company       Company        @relation(fields: [companyId], references: [id])
+  company       User        @relation(fields: [companyId], references: [id])
   companyId     String         @db.Uuid
   name          String
   description   String
@@ -68,7 +58,7 @@ model Plan {
 
 model Feature {
   id          String         @id @default(uuid()) @db.Uuid
-  company     Company        @relation(fields: [companyId], references: [id])
+  company     User        @relation(fields: [companyId], references: [id])
   companyId   String         @db.Uuid
   name        String
   description String

@@ -21,3 +21,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         raise HTTPException(status_code=401, detail="User not found")
 
     return user
+
+async def get_current_company(user: User = Depends(get_current_user)):
+    if user.role != "COMPANY":
+        raise HTTPException(status_code=401, detail="Company not found")
+    return user

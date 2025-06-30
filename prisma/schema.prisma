@@ -8,27 +8,34 @@ datasource db {
 }
 
 model User {
-  id          String         @id @default(uuid()) @db.Uuid
-  username    String  @unique
-  email       String         @unique
-  password    String
-  isVerified  Boolean        @default(false)
+  id            String         @id @default(uuid()) @db.Uuid
+  username      String         @unique
+  email         String         @unique
+  role          Role           @default(USER)
+  password      String
+  isVerified    Boolean        @default(false)
   subscriptions Subscription[]
-  created_at  DateTime       @default(now())
-  updated_at  DateTime       @updatedAt
-  deleted_at  DateTime?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  deleted_at    DateTime?
+}
+
+enum Role {
+  USER
+  COMPANY
+  ADMIN
 }
 
 model Company {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String
-  email       String   @unique
-  password    String
-  plans       Plan[]
-  features    Feature[]
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  deleted_at  DateTime?
+  id         String    @id @default(uuid()) @db.Uuid
+  name       String
+  email      String    @unique
+  password   String
+  plans      Plan[]
+  features   Feature[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
 }
 
 model Subscription {
@@ -45,18 +52,18 @@ model Subscription {
 }
 
 model Plan {
-  id          String         @id @default(uuid()) @db.Uuid
-  company     Company        @relation(fields: [companyId], references: [id])
-  companyId   String         @db.Uuid
-  name        String
-  description String
-  cost        Int
-  discount    Int
+  id            String         @id @default(uuid()) @db.Uuid
+  company       Company        @relation(fields: [companyId], references: [id])
+  companyId     String         @db.Uuid
+  name          String
+  description   String
+  cost          Int
+  discount      Int
   subscriptions Subscription[]
-  features    PlanFeatures[]
-  created_at  DateTime       @default(now())
-  updated_at  DateTime       @updatedAt
-  deleted_at  DateTime?
+  features      PlanFeatures[]
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  deleted_at    DateTime?
 }
 
 model Feature {
@@ -69,22 +76,22 @@ model Feature {
 }
 
 model PlanFeatures {
-  planId     String  @db.Uuid
-  featureId  String  @db.Uuid
-  plan       Plan    @relation(fields: [planId], references: [id])
-  feature    Feature @relation(fields: [featureId], references: [id])
+  planId    String  @db.Uuid
+  featureId String  @db.Uuid
+  plan      Plan    @relation(fields: [planId], references: [id])
+  feature   Feature @relation(fields: [featureId], references: [id])
 
   @@id([planId, featureId])
 }
 
 model Payment {
-  id             String         @id @default(uuid()) @db.Uuid
-  subscription   Subscription   @relation(fields: [subscriptionId], references: [id])
-  subscriptionId String         @db.Uuid
+  id             String        @id @default(uuid()) @db.Uuid
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String        @db.Uuid
   amount         Int
   status         PaymentStatus
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
   deleted_at     DateTime?
 }
 

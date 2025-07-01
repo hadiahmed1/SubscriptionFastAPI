@@ -1,14 +1,12 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from jose import JWTError, jwt
 from app.core.config import SECRET_KEY, ALGORITHM
 from app.db.client import db
 from prisma.models import User
-from fastapi.security import OAuth2PasswordBearer
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
-
-async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+async def get_current_user(request: Request) -> User:
     try:
+        token = request.cookies.get("access_token")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("id")
         if user_id is None:

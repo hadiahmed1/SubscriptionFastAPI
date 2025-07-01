@@ -2,6 +2,12 @@ from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from app.db.client import db
 from app.routers import auth, user, plan, feature, subscription
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:5173",  # React frontend
+]
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -10,8 +16,16 @@ async def lifespan(app: FastAPI):
     yield
     # Shutdown
     await db.disconnect()
-    
+
+
 app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  
+    allow_credentials=True,  
+    allow_methods=["*"], 
+    allow_headers=["*"],  
+)
 app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(plan.router)

@@ -2,7 +2,9 @@ from datetime import datetime, timedelta
 from app.db.client import db
 from app.services.plan_service import find_plan_byID
 
-include_conditions = {"plan": {"include": {"features": {"include": {"feature": True}}}}}
+include_conditions = {
+    "plan": {"include": {"company": True, "features": {"include": {"feature": True}}}}
+}
 
 
 async def suscribe(userId, planId):

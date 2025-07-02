@@ -9,21 +9,23 @@ from app.db.client import db
 async def get_user(identifier: str) -> User:
     user = await db.user.find_first(
         where={
-            'OR': [
-                {'username': identifier},
-                {'email': identifier},
+            "OR": [
+                {"username": identifier},
+                {"email": identifier},
             ]
         }
     )
     print(user)
     return user
 
+
 async def authenticate_user(identifier: str, password: str):
-    user:User|None = await get_user(identifier)
+    user: User | None = await get_user(identifier)
 
     if user is None or not verify_password(password, user.password):
         return False
     return user
+
 
 async def create_user(user_data: UserCreate) -> User:
     hashed_password = hash_password(user_data.password)
@@ -37,15 +39,13 @@ async def create_user(user_data: UserCreate) -> User:
         }
     )
 
+
 async def get_company(company_id):
-    company= await db.user.find_unique(where={
-        'id':company_id,
-        'role':'COMPANY'
-    })
+    company = await db.user.find_unique(where={"id": company_id, "role": "COMPANY"})
     if company is None:
         raise HTTPException(
             status_code=400,
-            detail="Feature with this name already exists for this company."
+            detail="Feature with this name already exists for this company.",
         )
     else:
         return company

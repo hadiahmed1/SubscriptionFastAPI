@@ -10,7 +10,6 @@ router = APIRouter(
     tags=["Feature"]
 )
 
-
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def post_feature(feature: FeatureCreate,  company: User = Depends(get_current_company)):
     try:

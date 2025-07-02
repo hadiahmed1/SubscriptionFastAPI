@@ -42,6 +42,7 @@ async def create_plan(company_id, plan_data: PlanCreate) -> Plan:
         include={"features": True},
     )
 
+
 async def find_plans() -> List[Plan]:
     return await db.plan.find_many(
         include={
@@ -49,6 +50,7 @@ async def find_plans() -> List[Plan]:
             "features": {"include": {"feature": True}},
         }
     )
+
 
 async def find_plan_byID(id) -> Plan:
     plan = await db.plan.find_unique(

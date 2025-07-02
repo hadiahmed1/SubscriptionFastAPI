@@ -7,6 +7,8 @@ from prisma.models import User
 async def get_current_user(request: Request) -> User:
     try:
         token = request.cookies.get("access_token")
+        if token is None:
+            raise HTTPException(status_code=401, detail="Please Login")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("id")
         if user_id is None:

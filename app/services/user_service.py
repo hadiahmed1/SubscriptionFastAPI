@@ -15,7 +15,6 @@ async def get_user(identifier: str) -> User:
             ]
         }
     )
-    print(user)
     return user
 
 

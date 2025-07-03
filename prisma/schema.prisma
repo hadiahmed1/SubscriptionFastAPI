@@ -39,6 +39,8 @@ model Subscription {
   created_at   DateTime  @default(now())
   updated_at   DateTime  @updatedAt
   deleted_at   DateTime?
+
+  @@unique([subscriberId, planId])
 }
 
 model Plan {
@@ -48,7 +50,8 @@ model Plan {
   name          String
   description   String
   cost          Int
-  discount      Int
+  discount      Int @default(0)
+  validity  Int @default(30)
   subscriptions Subscription[]
   features      PlanFeatures[]
   created_at    DateTime       @default(now())

@@ -13,7 +13,7 @@ async def suscribe(userId, planId):
         data={
             "planId": plan.id,
             "subscriberId": userId,
-            "expiresOn": datetime.utcnow() + timedelta(days=30),
+            "expiresOn": datetime.utcnow() + timedelta(days=plan.validity),
         },
         include=include_conditions,
     )

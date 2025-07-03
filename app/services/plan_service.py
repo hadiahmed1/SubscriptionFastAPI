@@ -8,9 +8,7 @@ from prisma.models import Plan, User
 
 
 async def validate_feature_ids_for_company(feature_ids: list[str], company_id: str):
-    company_features = await db.feature.find_many(
-        where={"companyId": company_id}
-    )
+    company_features = await db.feature.find_many(where={"companyId": company_id})
     valid_feature_ids = {f.id for f in company_features}
 
     invalid_ids = [fid for fid in feature_ids if fid not in valid_feature_ids]
@@ -32,6 +30,7 @@ async def create_plan(company_id, plan_data: PlanCreate) -> Plan:
             "description": plan_data.description,
             "cost": plan_data.cost,
             "discount": plan_data.discount,
+            "validity": plan_data.validity,
             "features": {
                 "create": [
                     {"feature": {"connect": {"id": f["id"]}}}

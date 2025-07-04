@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.concurrency import asynccontextmanager
 from app.db.client import db
-from app.routers import auth, user, plan, feature, subscription
+from app.routers import auth, user, plan, feature, subscription, order
 from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
@@ -31,3 +31,4 @@ app.include_router(user.router)
 app.include_router(plan.router)
 app.include_router(feature.router)
 app.include_router(subscription.router)
+app.include_router(order.router)

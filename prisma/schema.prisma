@@ -15,11 +15,13 @@ model User {
   password      String
   isVerified    Boolean        @default(false)
   subscriptions Subscription[]
-  plans      Plan[]
-  features   Feature[]
+  plans         Plan[]
+  features      Feature[]
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   deleted_at    DateTime?
+
+  Order Order[]
 }
 
 enum Role {
@@ -45,23 +47,25 @@ model Subscription {
 
 model Plan {
   id            String         @id @default(uuid()) @db.Uuid
-  company       User        @relation(fields: [companyId], references: [id])
+  company       User           @relation(fields: [companyId], references: [id])
   companyId     String         @db.Uuid
   name          String
   description   String
   cost          Int
-  discount      Int @default(0)
-  validity  Int @default(30)
+  discount      Int            @default(0)
+  validity      Int            @default(30)
   subscriptions Subscription[]
   features      PlanFeatures[]
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   deleted_at    DateTime?
+
+  Order Order[]
 }
 
 model Feature {
   id          String         @id @default(uuid()) @db.Uuid
-  company     User        @relation(fields: [companyId], references: [id])
+  company     User           @relation(fields: [companyId], references: [id])
   companyId   String         @db.Uuid
   name        String
   description String
@@ -93,4 +97,12 @@ enum PaymentStatus {
   failed
   pending
   cancelled
+}
+
+model Order {
+  id     String @id
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+  planId String @db.Uuid
+  plan   Plan   @relation(fields: [planId], references: [id])
 }

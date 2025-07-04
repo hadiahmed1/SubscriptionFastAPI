@@ -100,9 +100,10 @@ enum PaymentStatus {
 }
 
 model Order {
-  id     String @id
-  userId String @db.Uuid
-  user   User   @relation(fields: [userId], references: [id])
-  planId String @db.Uuid
-  plan   Plan   @relation(fields: [planId], references: [id])
+  id       String @id @default(uuid()) @db.Uuid
+  order_id String
+  userId   String @db.Uuid
+  user     User   @relation(fields: [userId], references: [id])
+  planId   String @db.Uuid
+  plan     Plan   @relation(fields: [planId], references: [id])
 }

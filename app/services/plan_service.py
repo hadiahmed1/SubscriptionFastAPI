@@ -61,7 +61,7 @@ async def find_my_plans(request: Request) -> List[Plan]:
 
         return await find_plans(where={"id": {"not_in": subscribed_plan_ids}})
     except HTTPException:
-        return await db.plan.find_many()
+        return await find_plans()
 
 
 async def find_plan_byID(id) -> Plan:

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from app.core.dependancy import get_current_company
 from app.schemas.plan_schema import PlanCreate
-from app.services.plan_service import create_plan, find_plans
+from app.services.plan_service import create_plan, find_my_plans, find_plans
 from prisma.models import User
 from prisma.errors import UniqueViolationError
 
@@ -22,8 +22,8 @@ async def post_plan(plan: PlanCreate,  company: User = Depends(get_current_compa
         )
 
 @router.get("/",status_code=status.HTTP_200_OK)
-async def get_plans():
-    return await find_plans()
+async def get_plans(request:Request):
+    return await find_my_plans(request)
 
 @router.get("/company",status_code=status.HTTP_200_OK)
 async def get_company_plans(company:User=Depends(get_current_company)):

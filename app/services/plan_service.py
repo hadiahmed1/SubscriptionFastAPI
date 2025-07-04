@@ -1,7 +1,7 @@
 from typing import List
 
-from fastapi import Depends, HTTPException
-from app.core.dependancy import get_current_company
+from fastapi import Depends, HTTPException, Request
+from app.core.dependancy import get_current_company, get_current_user
 from app.db.client import db
 from app.schemas.plan_schema import PlanCreate
 from prisma.models import Plan, User
@@ -48,8 +48,20 @@ async def find_plans(where={}) -> List[Plan]:
         include={
             "company": True,
             "features": {"include": {"feature": True}},
-        }
+        },
     )
+
+
+async def find_my_plans(request: Request) -> List[Plan]:
+    try:
+        user = await get_current_user(request=request)
+        # finding suscribed plans
+        subscriptions = await db.subscription.find_many(where={"subscriberId": user.id})
+        subscribed_plan_ids = [sub.planId for sub in subscriptions]
+
+        return await find_plans(where={"id": {"not_in": subscribed_plan_ids}})
+    except HTTPException:
+        return await db.plan.find_many()
 
 
 async def find_plan_byID(id) -> Plan:

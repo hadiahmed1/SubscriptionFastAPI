@@ -24,3 +24,7 @@ async def post_plan(plan: PlanCreate,  company: User = Depends(get_current_compa
 @router.get("/",status_code=status.HTTP_200_OK)
 async def get_plans():
     return await find_plans()
+
+@router.get("/company",status_code=status.HTTP_200_OK)
+async def get_company_plans(company:User=Depends(get_current_company)):
+    return await find_plans(where={"companyId":company.id})

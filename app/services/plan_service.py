@@ -42,8 +42,9 @@ async def create_plan(company_id, plan_data: PlanCreate) -> Plan:
     )
 
 
-async def find_plans() -> List[Plan]:
+async def find_plans(where={}) -> List[Plan]:
     return await db.plan.find_many(
+        where=where,
         include={
             "company": True,
             "features": {"include": {"feature": True}},

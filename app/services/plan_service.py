@@ -6,6 +6,8 @@ from app.db.client import db
 from app.schemas.plan_schema import PlanCreate
 from prisma.models import Plan
 
+from app.services.razorpay_service import create_razor_pay_plan
+
 
 async def validate_feature_ids_for_company(feature_ids: list[str], company_id: str):
     company_features = await db.feature.find_many(where={"companyId": company_id})
@@ -22,23 +24,24 @@ async def create_plan(company_id, plan_data: PlanCreate) -> Plan:
     feature_connections = [{"id": fid} for fid in plan_data.feature_ids]
 
     await validate_feature_ids_for_company(plan_data.feature_ids, company_id)
-    plan = razorpay_client.plan.create(
-        {
-            "period": "weekly",
-            "interval": 1,
-            "item": {
-                "name": plan_data.name,
-                "amount": plan_data.cost * 100,
-                "currency": "INR",
-                "description": "Weekly subscription",
-            },
-        }
-    )
 
+    # razorpay_plan_id = create_razor_pay_plan(name=plan_data.name, amount=plan_data.cost)
+    
+    plan = razorpay_client.plan.create({
+    "period": "monthly",  
+    "interval": 1,
+    "item": {
+        "name": "Basic Monthly Plan",
+        "amount": 99900, 
+        "currency": "INR",
+        "description": "Monthly subscription"
+    }
+})
     return await db.plan.create(
         data={
             "companyId": company_id,
-            "rzp_planId": plan.id,
+            # "": razorpay_plan_id,
+            "rzp_planId":plan.id,
             "name": plan_data.name,
             "description": plan_data.description,
             "cost": plan_data.cost,

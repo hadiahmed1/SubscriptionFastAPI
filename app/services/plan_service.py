@@ -1,10 +1,10 @@
 from typing import List
-
+from app.core.razorpay import razorpay_client
 from fastapi import Depends, HTTPException, Request
 from app.core.dependancy import get_current_company, get_current_user
 from app.db.client import db
 from app.schemas.plan_schema import PlanCreate
-from prisma.models import Plan, User
+from prisma.models import Plan
 
 
 async def validate_feature_ids_for_company(feature_ids: list[str], company_id: str):
@@ -22,10 +22,23 @@ async def create_plan(company_id, plan_data: PlanCreate) -> Plan:
     feature_connections = [{"id": fid} for fid in plan_data.feature_ids]
 
     await validate_feature_ids_for_company(plan_data.feature_ids, company_id)
+    plan = razorpay_client.plan.create(
+        {
+            "period": "weekly",
+            "interval": 1,
+            "item": {
+                "name": plan_data.name,
+                "amount": plan_data.cost * 100,
+                "currency": "INR",
+                "description": "Weekly subscription",
+            },
+        }
+    )
 
     return await db.plan.create(
         data={
             "companyId": company_id,
+            "rzp_planId": plan.id,
             "name": plan_data.name,
             "description": plan_data.description,
             "cost": plan_data.cost,

@@ -47,6 +47,7 @@ model Subscription {
 
 model Plan {
   id            String         @id @default(uuid()) @db.Uuid
+  rzp_planId    String?
   company       User           @relation(fields: [companyId], references: [id])
   companyId     String         @db.Uuid
   name          String

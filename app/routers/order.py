@@ -1,18 +1,15 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, status
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, HTTPException, status
 import razorpay
-from app.core.config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
 from app.core.dependancy import get_current_user
 from app.schemas.order_schema import OrderCreate
 from app.services.plan_service import find_plan_byID
-from prisma.models import Plan, User, Order
+from prisma.models import Plan, User
 from app.db.client import db
 from app.services.suscription_service import suscribe
+from app.core.razorpay import razorpay_client
+
 
 router = APIRouter(prefix="/order", tags=["Order"])
-
-razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-
 
 @router.post("/verify")
 async def verify_signature(data:OrderCreate):

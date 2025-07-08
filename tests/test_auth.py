@@ -11,6 +11,21 @@ async def test_post_token_success(async_client):
     data = response.json()
     assert data["message"] == "Login successful"
     assert data["user"]["username"] == "hadi"
+    assert data["user"]["role"] == "USER"
+    assert "access_token" in response.cookies
+
+
+# COMPANY LOGIN
+@pytest.mark.asyncio
+async def test_company_post_token_success(async_client):
+    response = await async_client.post(
+        "/auth/token", json={"username": "comp1", "password": "comp1"}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["message"] == "Login successful"
+    assert data["user"]["username"] == "comp1"
+    assert data["user"]["role"] == "COMPANY"
     assert "access_token" in response.cookies
 
 

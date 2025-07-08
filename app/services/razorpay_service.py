@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 from app.core.config import RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET
 
+
 def create_razor_pay_plan(
     name: str,
     amount: int,
@@ -16,10 +17,10 @@ def create_razor_pay_plan(
         "interval": interval,
         "item": {
             "name": name,
-            "amount": amount*100,
+            "amount": amount * 100,
             "currency": "INR",
             "description": f"Description for the {name}",
-        }
+        },
     }
 
     response = requests.post(
@@ -31,5 +32,5 @@ def create_razor_pay_plan(
     print("RAZORPAY ERROR:", response.status_code, response.text)
 
     response.raise_for_status()
-    response.raise_for_status()  
+    response.raise_for_status()
     return response.json()["id"]

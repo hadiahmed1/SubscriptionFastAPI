@@ -3,10 +3,8 @@ from app.schemas.user_schema import UserCreate
 from app.services.user_service import create_user
 from prisma.errors import UniqueViolationError
 
-router = APIRouter(
-    prefix="/users",
-    tags=["Users"]
-)
+router = APIRouter(prefix="/users", tags=["Users"])
+
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def register_user(user: UserCreate):
@@ -16,6 +14,6 @@ async def register_user(user: UserCreate):
         return new_user
     except UniqueViolationError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with this email or username already exists."
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User with this email or username already exists.",
         )

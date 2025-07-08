@@ -4,7 +4,7 @@ from prisma.models import User
 from app.schemas.user_schema import UserCreate
 from app.core.security import hash_password
 from app.db.client import db
-
+from fastapi import status
 
 async def get_user(identifier: str) -> User:
     user = await db.user.find_first(
@@ -15,6 +15,11 @@ async def get_user(identifier: str) -> User:
             ]
         }
     )
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
     return user
 
 

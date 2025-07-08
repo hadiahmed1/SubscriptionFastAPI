@@ -11,9 +11,13 @@ include_conditions = {
 
 async def suscribe(userId, planId):
     plan = await find_plan_byID(planId)
-    old_sub = await db.subscription.find_unique(where={'subscriberId_planId':{"subscriberId": userId, "planId": planId}})
+    old_sub = await db.subscription.find_unique(
+        where={"subscriberId_planId": {"subscriberId": userId, "planId": planId}}
+    )
     if old_sub:
-        raise HTTPException(status_code=400, detail="User is already subscribed to this plan.")
+        raise HTTPException(
+            status_code=403, detail="User is already subscribed to this plan."
+        )
     return await db.subscription.create(
         data={
             "planId": plan.id,

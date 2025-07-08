@@ -11,8 +11,9 @@ from app.core.razorpay import razorpay_client
 
 router = APIRouter(prefix="/order", tags=["Order"])
 
+
 @router.post("/verify")
-async def verify_signature(data:OrderCreate):
+async def verify_signature(data: OrderCreate):
     try:
         # Verify signature
         razorpay_client.utility.verify_payment_signature(
@@ -22,13 +23,12 @@ async def verify_signature(data:OrderCreate):
                 "razorpay_signature": data.razorpay_signature,
             }
         )
-        #create subscription
+        # create subscription
         order = await db.order.find_first(where={"order_id": data.razorpay_order_id})
         subscription = await suscribe(planId=order.planId, userId=order.userId)
         return subscription
     except razorpay.errors.SignatureVerificationError:
         raise HTTPException(status_code=400, detail="Signature verification failed")
-
 
 
 @router.post("/{plan_id}", status_code=status.HTTP_201_CREATED)
@@ -43,4 +43,3 @@ async def create_order(plan_id, user: User = Depends(get_current_user)):
         data={"order_id": razorpay_order["id"], "userId": user.id, "planId": plan.id}
     )
     return {"order_id": razorpay_order["id"], "amount": amount}
-

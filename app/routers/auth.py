@@ -26,7 +26,8 @@ async def login_for_access_token(form_data: LoginRequest):
     response = JSONResponse(
         content={
             "message": "Login successful",
-            "user": {"id": user.id, "username": user.username, "role": user.role},
+            "user": {"id": user.id, "username": user.username, "role": user.role, "email":user.email},
+            "access_token":access_token
         }
     )
     response.set_cookie(

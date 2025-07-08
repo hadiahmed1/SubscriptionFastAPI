@@ -61,13 +61,22 @@ async def test_get_user_success(async_client):
     assert response.status_code == 200
     data = response.json()
     access_token = data["access_token"]
-    
+
+    # accessing protected route /users/me
     response = await async_client.get(
-        "/users/me",
-        cookies={"access_token": access_token}
+        "/users/me", cookies={"access_token": access_token}
     )
 
-    # Assert response
     assert response.status_code == 200
     data = response.json()
-    assert data["username"] == "hadi" 
+    assert data["username"] == "hadi"
+
+
+# GET USER FAIL WITHOUT COOKIES
+@pytest.mark.asyncio
+async def test_get_user_fail_without_cookie(async_client):
+    response = await async_client.get("/users/me")
+
+    assert response.status_code == 401
+    data = response.json()
+    assert data["detail"] == "Please Login"

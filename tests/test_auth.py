@@ -1,4 +1,6 @@
 import pytest
+from app.core.config import ALGORITHM
+from jose import jwt
 
 
 # SUCCESSFUL LOGIN
@@ -80,3 +82,19 @@ async def test_get_user_fail_without_cookie(async_client):
     assert response.status_code == 401
     data = response.json()
     assert data["detail"] == "Please Login"
+
+
+# GET USER FAIL WITH INVALID TOKEN
+@pytest.mark.asyncio
+async def test_get_user_fail_with_invlaid_token(async_client):
+
+    to_encode = data = {"id": "ksdhfaksjhf", "role": "USER"}
+    access_token = jwt.encode(to_encode, "wrong-key", algorithm=ALGORITHM)
+    response = await async_client.get(
+        "/users/me", cookies={"access_token": access_token}
+    )
+
+    data = response.json()
+    print(data)
+    assert response.status_code == 401
+    assert data["detail"] == "Invalid token"

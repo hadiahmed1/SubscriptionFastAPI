@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.concurrency import asynccontextmanager
 from app.db.client import db
 from app.routers import auth, user, plan, feature, subscription, order
@@ -19,6 +19,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+@app.get("/", status_code=status.HTTP_200_OK)
+async def hello_world():
+    return {"msg": "Hello World"}
+    
+    
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

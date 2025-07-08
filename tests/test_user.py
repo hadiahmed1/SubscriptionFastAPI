@@ -38,3 +38,16 @@ async def test_create_duplicate_user(async_client):
     assert response.status_code == 409
     data = response.json()
     assert data["detail"] == "User with this email or username already exists."
+
+
+# CREATE USER WITH INVALID EMAIL
+@pytest.mark.asyncio
+async def test_create_invalid_email_user(async_client):
+    user_create = {
+        "username": "hadi",
+        "email": "userexample.com", #invalid email
+        "role": "USER",
+        "password": "string",
+    }
+    response = await async_client.post("/users/", json=user_create)
+    assert response.status_code == 422

@@ -49,3 +49,25 @@ async def test_post_token_wrong_username(async_client):
     assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "User not found"
+
+
+# GET USER SUCCESSFULLY WITH COOKIES
+@pytest.mark.asyncio
+async def test_get_user_success(async_client):
+    # getting access token
+    response = await async_client.post(
+        "/auth/token", json={"username": "hadi", "password": "hadi"}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    access_token = data["access_token"]
+    
+    response = await async_client.get(
+        "/users/me",
+        cookies={"access_token": access_token}
+    )
+
+    # Assert response
+    assert response.status_code == 200
+    data = response.json()
+    assert data["username"] == "hadi" 
